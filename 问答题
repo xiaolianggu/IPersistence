@@ -16,4 +16,16 @@ BatchExecutor：执行update（没有select，JDBC批处理不支持select），
                                             每个Statement对象都是addBatch()完毕后，等待逐一执行executeBatch()批处理。与JDBC批处理相同。
 
 4、简述下Mybatis的一级、二级缓存（分别从存储结构、范围、失效场景。三个方面来作答）？
+MyBatis的一级缓存是基于SqlSession级别的，也就是说某个SqlSession进行某个查询操作后会将该结果暂时缓存起来，而后在所有的SqlSession没有
+对该表进行插入、修改、删除操作的情况下，当这个SqlSession再次发起此查询时SqlSession不会去数据库执行查询操作，而是直接从缓存拿出上次查询的结果。
+不同的SqlSession之间缓存的数据互不影响，每次请求数据库都会创建sqlsession(在没有开启事务的时候)，如果开启事务，同一个事务中sqlsession会共享
+
+MyBatis的二级缓存是基于Mapper级别的，也就是说多个SqlSession去使用某个Mapper的查询语句时，得到的缓存数据是可共用的，
+在一个mapper有插入、修改、删除操作的情况下，缓存失效
+
+
+
 5、简述Mybatis的插件运行原理，以及如何编写一个插件？
+   Executor,ParameterHandler,ResultSetHandler,StatementHandler,这几个对象都是代理对象，mybatis就是拦截这个几个对象来实现插件的
+   编写插件要实现Interceptor接口通过注解@Intercepts标注要拦截的方法，以及参数然后保存到Configuration类的interceptorChain中，
+ 
