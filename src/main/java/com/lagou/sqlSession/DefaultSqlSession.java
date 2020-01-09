@@ -18,7 +18,7 @@ public class DefaultSqlSession implements SqlSession {
     public <E> List<E> selectList(String statementid, Object... params) throws Exception {
 
         //将要去完成对simpleExecutor里的query方法的调用
-        simpleExecutor simpleExecutor = new simpleExecutor();
+        SimpleExecutor simpleExecutor = new SimpleExecutor();
         MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementid);
         List<Object> list = simpleExecutor.query(configuration, mappedStatement, params);
 
@@ -55,19 +55,44 @@ public class DefaultSqlSession implements SqlSession {
                 // 准备参数2：params:args
                 // 获取被调用方法的返回值类型
                 Type genericReturnType = method.getGenericReturnType();
-                // 判断是否进行了 泛型类型参数化
-                if(genericReturnType instanceof ParameterizedType){
-                    List<Object> objects = selectList(statementId, args);
-                    return objects;
+              
+                
+               
+                MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
+                if("select".equals(mappedStatement.getNodeName())) {
+                	  // 判断是否进行了 泛型类型参数化
+                    if(genericReturnType instanceof ParameterizedType){
+                        List<Object> objects = selectList(statementId, args);
+                        return objects;
+                    }else {
+                    	return selectOne(statementId,args);
+                    }
+                }else {
+                	 SimpleExecutor simpleExecutor = new SimpleExecutor();
+                	 return simpleExecutor.update(configuration, mappedStatement, args);
                 }
-
-                return selectOne(statementId,args);
-
             }
         });
 
         return (T) proxyInstance;
     }
+
+	@Override
+	public int insert(String statementid, Object... params) throws Exception {
+		return update(statementid,params);
+	}
+
+	@Override
+	public int delete(String statementid, Object... params) throws Exception {
+		return update(statementid,params);
+	}
+
+	@Override
+	public int update(String statementid, Object... params) throws Exception {
+		  SimpleExecutor simpleExecutor = new SimpleExecutor();
+	      MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementid);
+		return simpleExecutor.update(configuration, mappedStatement, params);
+	}
 
 
 }

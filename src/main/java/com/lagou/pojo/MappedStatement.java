@@ -10,7 +10,9 @@ public class MappedStatement {
     private String paramterType;
     //sql语句
     private String sql;
-
+    //节点名称
+    private String nodeName;
+    
     public String getId() {
         return id;
     }
@@ -42,4 +44,13 @@ public class MappedStatement {
     public void setSql(String sql) {
         this.sql = sql;
     }
+
+	public String getNodeName() {
+		return nodeName;
+	}
+
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
+	}
+    
 }

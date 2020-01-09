@@ -32,6 +32,7 @@ public class XMLMapperBuilder {
             String paramterType = element.attributeValue("paramterType");
             String sqlText = element.getTextTrim();
             MappedStatement mappedStatement = new MappedStatement();
+            mappedStatement.setNodeName("select");
             mappedStatement.setId(id);
             mappedStatement.setResultType(resultType);
             mappedStatement.setParamterType(paramterType);
@@ -41,6 +42,48 @@ public class XMLMapperBuilder {
 
         }
 
+        List<Element> addList = rootElement.selectNodes("//insert");
+        for (Element element : addList) {
+            String id = element.attributeValue("id");
+            String paramterType = element.attributeValue("paramterType");
+            String sqlText = element.getTextTrim();
+            MappedStatement mappedStatement = new MappedStatement();
+            mappedStatement.setNodeName("insert");
+            mappedStatement.setId(id);
+            mappedStatement.setParamterType(paramterType);
+            mappedStatement.setSql(sqlText);
+            String key = namespace+"."+id;
+            configuration.getMappedStatementMap().put(key,mappedStatement);
+        }
+        
+        List<Element> updateList = rootElement.selectNodes("//update");
+        for (Element element : updateList) {
+            String id = element.attributeValue("id");
+            String paramterType = element.attributeValue("paramterType");
+            String sqlText = element.getTextTrim();
+            MappedStatement mappedStatement = new MappedStatement();
+            mappedStatement.setNodeName("update");
+            mappedStatement.setId(id);
+            mappedStatement.setParamterType(paramterType);
+            mappedStatement.setSql(sqlText);
+            String key = namespace+"."+id;
+            configuration.getMappedStatementMap().put(key,mappedStatement);
+        }
+        
+        List<Element> deleteList = rootElement.selectNodes("//delete");
+        for (Element element : deleteList) {
+            String id = element.attributeValue("id");
+            String paramterType = element.attributeValue("paramterType");
+            String sqlText = element.getTextTrim();
+            MappedStatement mappedStatement = new MappedStatement();
+            mappedStatement.setNodeName("delete");
+            mappedStatement.setId(id);
+            mappedStatement.setParamterType(paramterType);
+            mappedStatement.setSql(sqlText);
+            String key = namespace+"."+id;
+            configuration.getMappedStatementMap().put(key,mappedStatement);
+        }
+        
     }
 
 
